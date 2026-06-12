@@ -1,6 +1,7 @@
-Sube aquí las imágenes de la marca:
+Imágenes de la marca (ya conectadas):
 
-- logo.png     -> logo IASA en blanco, fondo transparente, ~100-150 px de alto (se muestra a 36 px)
-- eslogan.png  -> eslogan en blanco, fondo transparente, ~60-80 px de alto (se muestra a 20 px)
+- logo.png     -> logo IASA, se muestra a 36 px de alto
+- eslogan.png  -> "El equipo del progreso", se muestra a 26 px de alto
 
 El tamaño en pantalla se ajusta en css/styles.css (.brand-logo y .brand-slogan).
+Usa siempre nombres en minúsculas: el servidor distingue mayúsculas.

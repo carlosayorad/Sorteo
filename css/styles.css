@@ -60,7 +60,14 @@ body {
 
 /* Imágenes de marca: ajusta aquí la altura con la que se muestran */
 .brand-logo { height: 36px; width: auto; display: block; }
-.brand-slogan { height: 20px; width: auto; display: block; }
+
+.brand-slogan {
+  height: 26px;
+  width: auto;
+  display: block;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  padding-left: 0.9rem;
+}
 
 /* Respaldo en texto: solo se muestra si assets/logo.png no existe */
 .brand-mark { display: none; }
