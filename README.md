@@ -96,6 +96,9 @@ vercel dev        # sirve el sitio + la API en http://localhost:3000
 
 ## Características
 
+- ✅ Pantalla única de votación: escudos interactivos de Ecuador y Alemania (toca y elige).
+- ✅ Popup de registro automático a los 5 segundos de entrar a la página, con el
+  pronóstico sincronizado con el escudo elegido.
 - ✅ Diseño profesional responsive (móvil, tablet y escritorio) con la identidad de IASA.
 - ✅ Cuenta regresiva con cierre automático de la votación al inicio del partido
   (verificado también en el servidor).

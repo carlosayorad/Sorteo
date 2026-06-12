@@ -3,219 +3,186 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pronostica y Gana | IASA · Mundial 2026</title>
-  <meta name="description" content="Vota por el ganador del Ecuador vs. Alemania del Mundial 2026 y participa en el sorteo de una Smart TV. Una iniciativa de IASA." />
+  <title>Vota y Gana | IASA · Ecuador vs. Alemania · Mundial 2026</title>
+  <meta name="description" content="Toca el escudo del equipo que crees que ganará el Ecuador vs. Alemania del Mundial 2026 y participa en el sorteo de una Smart TV. Una iniciativa de IASA." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,700;1,800;1,900&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23FFCD11'/><text x='50' y='68' font-size='52' font-weight='900' font-family='Arial' text-anchor='middle' fill='%23111'>IA</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23111'/><text x='52' y='66' font-size='44' font-weight='900' font-style='italic' font-family='Arial' text-anchor='middle' fill='%23fff'>IASA</text></svg>" />
 </head>
 <body>
 
-  <!-- ============ HEADER ============ -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#inicio" aria-label="IASA - Inicio">
+  <div class="page">
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="IASA">
+        <!-- Logotipo IASA (reemplazable por assets/logo.png cuando esté disponible) -->
         <span class="brand-mark">IASA</span>
-        <span class="brand-tag">Construyendo el futuro del Ecuador</span>
       </a>
-      <nav class="site-nav">
-        <a href="#como-participar">Cómo participar</a>
-        <a href="#premio">El premio</a>
-        <a href="#bases" data-open-terms>Bases del sorteo</a>
-        <a href="#votar" class="nav-cta">Vota ahora</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <!-- ============ HERO ============ -->
-    <section class="hero" id="inicio">
-      <div class="hero-bg" aria-hidden="true"></div>
-      <div class="container hero-inner">
-        <p class="hero-kicker">IASA presenta · Mundial 2026</p>
-        <h1 class="hero-title">
-          Pronostica el partido.<br />
-          <span class="accent">Gana una Smart&nbsp;TV.</span>
-        </h1>
-        <p class="hero-sub">
-          Vota por el equipo que crees que ganará el <strong>Ecuador&nbsp;vs.&nbsp;Alemania</strong>.
-          Si aciertas, participas automáticamente en el sorteo de una
-          <strong>Smart&nbsp;TV&nbsp;55&Prime;&nbsp;4K</strong>.
-        </p>
-
-        <!-- Tarjeta del partido -->
-        <div class="match-card" role="group" aria-label="Partido Ecuador contra Alemania">
-          <div class="match-team">
-            <span class="flag flag-ecu" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="match-team-name">Ecuador</span>
-          </div>
-          <div class="match-vs">
-            <span class="vs-label">VS</span>
-            <span class="match-date" id="match-date-label">Mundial 2026</span>
-          </div>
-          <div class="match-team">
-            <span class="flag flag-ger" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="match-team-name">Alemania</span>
-          </div>
-        </div>
-
-        <!-- Cuenta regresiva -->
-        <div class="countdown" id="countdown" aria-live="polite">
-          <p class="countdown-title">La votación cierra en</p>
-          <div class="countdown-grid">
-            <div class="count-box"><span id="cd-days">--</span><small>Días</small></div>
-            <div class="count-box"><span id="cd-hours">--</span><small>Horas</small></div>
-            <div class="count-box"><span id="cd-mins">--</span><small>Min</small></div>
-            <div class="count-box"><span id="cd-secs">--</span><small>Seg</small></div>
-          </div>
-        </div>
-
-        <a href="#votar" class="btn btn-primary btn-lg">Quiero participar</a>
-      </div>
-    </section>
-
-    <!-- ============ CÓMO PARTICIPAR ============ -->
-    <section class="steps" id="como-participar">
-      <div class="container">
-        <h2 class="section-title">¿Cómo <span class="accent">participar</span>?</h2>
-        <p class="section-sub">Tres pasos simples y estás dentro del sorteo.</p>
-        <div class="steps-grid">
-          <article class="step-card">
-            <span class="step-num">1</span>
-            <h3>Elige tu equipo</h3>
-            <p>Vota por <strong>Ecuador</strong> o <strong>Alemania</strong>: el equipo que crees que ganará el partido.</p>
-          </article>
-          <article class="step-card">
-            <span class="step-num">2</span>
-            <h3>Regístrate</h3>
-            <p>Completa tus datos: nombre, apellido y correo electrónico. Solo te tomará un minuto.</p>
-          </article>
-          <article class="step-card">
-            <span class="step-num">3</span>
-            <h3>Acierta y gana</h3>
-            <p>Si tu equipo gana el partido, entras directo al sorteo de la <strong>Smart TV 55&Prime; 4K</strong>.</p>
-          </article>
-        </div>
-      </div>
-    </section>
+      <button class="link-bases" data-open-terms type="button">Bases del sorteo</button>
+    </header>
 
     <!-- ============ VOTACIÓN ============ -->
-    <section class="vote" id="votar">
-      <div class="container vote-inner">
-        <h2 class="section-title">¿Quién gana el <span class="accent">Ecuador vs. Alemania</span>?</h2>
-        <p class="section-sub">Selecciona tu pronóstico y completa el registro.</p>
-
-        <form id="vote-form" novalidate>
-          <!-- Selección de equipo -->
-          <div class="team-picker" role="radiogroup" aria-label="Elige el equipo ganador">
-            <label class="team-option" data-team="Ecuador">
-              <input type="radio" name="voto" value="Ecuador" required />
-              <span class="flag flag-ecu flag-lg" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="team-option-name">Ecuador</span>
-              <span class="team-option-check" aria-hidden="true">✓ Mi pronóstico</span>
-            </label>
-            <span class="team-picker-vs" aria-hidden="true">VS</span>
-            <label class="team-option" data-team="Alemania">
-              <input type="radio" name="voto" value="Alemania" required />
-              <span class="flag flag-ger flag-lg" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="team-option-name">Alemania</span>
-              <span class="team-option-check" aria-hidden="true">✓ Mi pronóstico</span>
-            </label>
-          </div>
-          <p class="field-error" id="error-voto" hidden>Selecciona el equipo que crees que ganará.</p>
-
-          <!-- Datos personales -->
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="nombre">Nombre</label>
-              <input type="text" id="nombre" name="nombre" autocomplete="given-name" placeholder="Ej. María" maxlength="60" required />
-              <p class="field-error" id="error-nombre" hidden>Ingresa tu nombre.</p>
-            </div>
-            <div class="form-field">
-              <label for="apellido">Apellido</label>
-              <input type="text" id="apellido" name="apellido" autocomplete="family-name" placeholder="Ej. Andrade" maxlength="60" required />
-              <p class="field-error" id="error-apellido" hidden>Ingresa tu apellido.</p>
-            </div>
-            <div class="form-field form-field-full">
-              <label for="correo">Correo electrónico</label>
-              <input type="email" id="correo" name="correo" autocomplete="email" placeholder="Ej. maria@correo.com" maxlength="120" required />
-              <p class="field-error" id="error-correo" hidden>Ingresa un correo electrónico válido.</p>
-            </div>
-          </div>
-
-          <label class="terms-check">
-            <input type="checkbox" id="acepta" required />
-            <span>He leído y acepto las <a href="#bases" data-open-terms>bases del sorteo</a> y autorizo a IASA el uso de mis datos para este sorteo.</span>
-          </label>
-          <p class="field-error" id="error-acepta" hidden>Debes aceptar las bases del sorteo para participar.</p>
-
-          <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit-btn">
-            <span class="btn-label">Enviar mi pronóstico</span>
-            <span class="btn-spinner" hidden aria-hidden="true"></span>
-          </button>
-          <p class="form-status" id="form-status" role="alert" hidden></p>
-        </form>
-
-        <!-- Pantalla de éxito -->
-        <div class="success-card" id="success-card" hidden>
-          <div class="success-icon" aria-hidden="true">✓</div>
-          <h3>¡Pronóstico registrado!</h3>
-          <p id="success-msg">
-            Gracias por participar. Si tu equipo gana el partido,
-            entrarás automáticamente en el sorteo de la Smart&nbsp;TV&nbsp;55&Prime;&nbsp;4K.
-          </p>
-          <p class="success-note">El ganador será contactado al correo registrado. ¡Mucha suerte! 🍀</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ PREMIO ============ -->
-    <section class="prize" id="premio">
-      <div class="container prize-inner">
-        <div class="prize-copy">
-          <h2 class="section-title">El <span class="accent">premio</span></h2>
-          <h3 class="prize-name">Smart TV 55&Prime; 4K UHD</h3>
-          <ul class="prize-list">
-            <li>Pantalla 4K Ultra HD de 55 pulgadas</li>
-            <li>Sistema Smart con tus apps de streaming favoritas</li>
-            <li>Lista para vivir cada partido del Mundial 2026</li>
-          </ul>
-          <p class="prize-foot">Un solo ganador será sorteado entre quienes acierten el resultado del partido.</p>
-        </div>
-        <div class="prize-visual" aria-hidden="true">
-          <div class="tv">
-            <div class="tv-screen">
-              <span class="tv-screen-text">ECU&nbsp;·&nbsp;GER<br /><em>Mundial 2026</em></span>
-            </div>
-            <div class="tv-stand"></div>
-            <div class="tv-base"></div>
-          </div>
-          <span class="prize-badge">55&Prime; 4K</span>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ============ FOOTER ============ -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <span class="brand-mark">IASA</span>
-        <p>Maquinaria y soluciones que construyen el futuro del Ecuador.</p>
-      </div>
-      <div class="footer-links">
-        <a href="#como-participar">Cómo participar</a>
-        <a href="#premio">El premio</a>
-        <a href="#bases" data-open-terms>Bases del sorteo</a>
-      </div>
-      <p class="footer-legal">
-        © 2026 IASA. Todos los derechos reservados. Promoción válida en Ecuador.
-        Sorteo sujeto a las bases y condiciones publicadas en este sitio.
+    <main class="arena">
+      <p class="kicker">Mundial 2026 · Fase de grupos</p>
+      <h1 class="title">¿Quién gana?</h1>
+      <p class="subtitle">
+        Toca el escudo de tu pronóstico. Si aciertas, participas en el sorteo de una
+        <strong>Smart&nbsp;TV&nbsp;55&Prime;&nbsp;4K</strong>.
       </p>
+
+      <div class="crests" role="radiogroup" aria-label="Elige el equipo ganador">
+        <!-- ECUADOR -->
+        <button class="crest-card" type="button" data-team="Ecuador" role="radio" aria-checked="false">
+          <svg class="crest" viewBox="0 0 100 112" aria-hidden="true">
+            <defs>
+              <clipPath id="shield-ecu">
+                <path d="M50 4 L94 16 V54 C94 79 76 96 50 108 C24 96 6 79 6 54 V16 Z" />
+              </clipPath>
+            </defs>
+            <g clip-path="url(#shield-ecu)">
+              <rect x="0" y="0" width="100" height="56" fill="#FFDD00" />
+              <rect x="0" y="56" width="100" height="28" fill="#034EA2" />
+              <rect x="0" y="84" width="100" height="28" fill="#ED1C24" />
+            </g>
+            <circle cx="50" cy="56" r="15" fill="#ffffff" stroke="#111" stroke-width="2.5" />
+            <polygon points="50,49.5 56,54 53.7,61.2 46.3,61.2 44,54" fill="#111" />
+            <g stroke="#111" stroke-width="1.6">
+              <line x1="50" y1="49.5" x2="50" y2="42" />
+              <line x1="56" y1="54" x2="63" y2="51" />
+              <line x1="53.7" y1="61.2" x2="58" y2="67.5" />
+              <line x1="46.3" y1="61.2" x2="42" y2="67.5" />
+              <line x1="44" y1="54" x2="37" y2="51" />
+            </g>
+            <path d="M50 4 L94 16 V54 C94 79 76 96 50 108 C24 96 6 79 6 54 V16 Z"
+                  fill="none" stroke="#0d0d0d" stroke-width="3.5" />
+          </svg>
+          <span class="crest-name">Ecuador</span>
+          <span class="crest-check" aria-hidden="true">✓ Mi pronóstico</span>
+        </button>
+
+        <span class="vs" aria-hidden="true">VS</span>
+
+        <!-- ALEMANIA -->
+        <button class="crest-card" type="button" data-team="Alemania" role="radio" aria-checked="false">
+          <svg class="crest" viewBox="0 0 100 112" aria-hidden="true">
+            <defs>
+              <clipPath id="shield-ger">
+                <path d="M50 4 L94 16 V54 C94 79 76 96 50 108 C24 96 6 79 6 54 V16 Z" />
+              </clipPath>
+            </defs>
+            <g clip-path="url(#shield-ger)">
+              <rect x="0" y="0" width="100" height="44" fill="#1a1a1a" />
+              <rect x="0" y="44" width="100" height="34" fill="#DD0000" />
+              <rect x="0" y="78" width="100" height="34" fill="#FFCE00" />
+            </g>
+            <circle cx="50" cy="56" r="15" fill="#ffffff" stroke="#111" stroke-width="2.5" />
+            <polygon points="50,49.5 56,54 53.7,61.2 46.3,61.2 44,54" fill="#111" />
+            <g stroke="#111" stroke-width="1.6">
+              <line x1="50" y1="49.5" x2="50" y2="42" />
+              <line x1="56" y1="54" x2="63" y2="51" />
+              <line x1="53.7" y1="61.2" x2="58" y2="67.5" />
+              <line x1="46.3" y1="61.2" x2="42" y2="67.5" />
+              <line x1="44" y1="54" x2="37" y2="51" />
+            </g>
+            <path d="M50 4 L94 16 V54 C94 79 76 96 50 108 C24 96 6 79 6 54 V16 Z"
+                  fill="none" stroke="#0d0d0d" stroke-width="3.5" />
+          </svg>
+          <span class="crest-name">Alemania</span>
+          <span class="crest-check" aria-hidden="true">✓ Mi pronóstico</span>
+        </button>
+      </div>
+
+      <p class="pick-hint" id="pick-hint" aria-live="polite"></p>
+
+      <div class="countdown" id="countdown" aria-live="polite">
+        <p class="countdown-title">La votación cierra en</p>
+        <div class="countdown-grid">
+          <div class="count-box"><span id="cd-days">--</span><small>Días</small></div>
+          <div class="count-box"><span id="cd-hours">--</span><small>Horas</small></div>
+          <div class="count-box"><span id="cd-mins">--</span><small>Min</small></div>
+          <div class="count-box"><span id="cd-secs">--</span><small>Seg</small></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer">
+      <p>
+        © 2026 IASA · Promoción válida en Ecuador ·
+        <button class="link-bases" data-open-terms type="button">Bases del sorteo</button>
+      </p>
+    </footer>
+  </div>
+
+  <!-- ============ POPUP: REGISTRO ============ -->
+  <div class="modal" id="form-modal" role="dialog" aria-modal="true" aria-labelledby="form-title" hidden>
+    <div class="modal-backdrop" data-close-form></div>
+    <div class="modal-panel modal-dark">
+      <button class="modal-close" data-close-form aria-label="Cerrar">×</button>
+
+      <form id="vote-form" novalidate>
+        <h2 id="form-title">¡Participa en el sorteo!</h2>
+        <p class="form-intro">
+          Para formar parte del sorteo de la <strong>Smart&nbsp;TV&nbsp;55&Prime;&nbsp;4K</strong>,
+          por favor rellena los siguientes datos:
+        </p>
+
+        <fieldset class="mini-picker">
+          <legend>Mi pronóstico</legend>
+          <label class="mini-option" data-team="Ecuador">
+            <input type="radio" name="voto" value="Ecuador" required />
+            <span class="mini-flag flag-ecu" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>Ecuador</span>
+          </label>
+          <label class="mini-option" data-team="Alemania">
+            <input type="radio" name="voto" value="Alemania" required />
+            <span class="mini-flag flag-ger" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>Alemania</span>
+          </label>
+        </fieldset>
+        <p class="field-error" id="error-voto" hidden>Selecciona el equipo que crees que ganará.</p>
+
+        <div class="form-field">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" autocomplete="given-name" placeholder="Ej. María" maxlength="60" required />
+          <p class="field-error" id="error-nombre" hidden>Ingresa tu nombre.</p>
+        </div>
+        <div class="form-field">
+          <label for="apellido">Apellido</label>
+          <input type="text" id="apellido" name="apellido" autocomplete="family-name" placeholder="Ej. Andrade" maxlength="60" required />
+          <p class="field-error" id="error-apellido" hidden>Ingresa tu apellido.</p>
+        </div>
+        <div class="form-field">
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" name="correo" autocomplete="email" placeholder="Ej. maria@correo.com" maxlength="120" required />
+          <p class="field-error" id="error-correo" hidden>Ingresa un correo electrónico válido.</p>
+        </div>
+
+        <label class="terms-check">
+          <input type="checkbox" id="acepta" required />
+          <span>He leído y acepto las <button type="button" class="link-bases inline" data-open-terms>bases del sorteo</button> y autorizo a IASA el uso de mis datos para este sorteo.</span>
+        </label>
+        <p class="field-error" id="error-acepta" hidden>Debes aceptar las bases del sorteo para participar.</p>
+
+        <button type="submit" class="btn btn-primary btn-block" id="submit-btn">
+          <span class="btn-label">Enviar y participar</span>
+          <span class="btn-spinner" hidden aria-hidden="true"></span>
+        </button>
+        <p class="form-status" id="form-status" role="alert" hidden></p>
+      </form>
+
+      <!-- Éxito (reemplaza al formulario dentro del popup) -->
+      <div class="success-card" id="success-card" hidden>
+        <div class="success-icon" aria-hidden="true">✓</div>
+        <h3>¡Pronóstico registrado!</h3>
+        <p id="success-msg"></p>
+        <p class="success-note">El ganador será contactado al correo registrado. ¡Mucha suerte! 🍀</p>
+      </div>
     </div>
-  </footer>
+  </div>
 
   <!-- ============ MODAL: BASES DEL SORTEO ============ -->
   <div class="modal" id="terms-modal" role="dialog" aria-modal="true" aria-labelledby="terms-title" hidden>
