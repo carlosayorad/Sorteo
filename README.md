@@ -2,69 +2,108 @@
 
 Sitio web del sorteo de IASA por el partido **Ecuador vs. Alemania** del Mundial 2026.
 Los visitantes votan por el equipo que creen que ganará; quienes acierten participan
-en el sorteo de una **Smart TV 55″ 4K**. Los registros (nombre, apellido, correo y voto)
-se guardan en una hoja de **Google Sheets**.
+en el sorteo de una **Smart TV 55″ 4K**.
+
+**Stack:** frontend estático (HTML/CSS/JS puros) + función serverless en **Vercel** +
+base de datos PostgreSQL en **Supabase**. Las credenciales nunca se exponen en el
+navegador y los correos duplicados los rechaza la propia base de datos
+(restricción `UNIQUE`).
 
 ## Estructura
 
 ```
-├── index.html                  # Página principal
-├── css/styles.css              # Estilos (identidad IASA: negro + amarillo)
-├── js/main.js                  # Lógica: votación, validación, envío, cuenta regresiva
-└── google-apps-script/Code.gs  # Script que recibe los registros en Google Sheets
+├── index.html            # Página principal
+├── css/styles.css        # Estilos (identidad IASA: negro + amarillo)
+├── js/main.js            # Lógica: votación, validación, envío, cuenta regresiva
+├── api/votar.js          # Función serverless (Vercel) que guarda los votos en Supabase
+└── supabase/schema.sql   # Esquema de la tabla de registros
 ```
 
-## Puesta en marcha (3 pasos)
+## Puesta en marcha
 
-### 1. Conectar Google Sheets
+### 1. Crear la base de datos en Supabase (~5 min)
 
-1. Entra a [sheets.new](https://sheets.new) con la cuenta de Google de la empresa y crea
-   una hoja de cálculo nueva (por ejemplo, llamada **"Sorteo Mundial IASA"**).
-2. En el menú: **Extensiones → Apps Script**.
-3. Borra el contenido del editor y pega todo el contenido de
-   [`google-apps-script/Code.gs`](google-apps-script/Code.gs). Guarda (icono de disquete).
-4. Pulsa **Implementar → Nueva implementación**:
-   - Tipo: **Aplicación web**
-   - Ejecutar como: **Yo**
-   - Quién tiene acceso: **Cualquier usuario** ← importante
-5. Autoriza los permisos cuando lo pida y **copia la URL** que termina en `/exec`.
+1. Entra a [supabase.com](https://supabase.com) con la cuenta de la empresa y crea un
+   proyecto nuevo (por ejemplo **"sorteo-mundial-iasa"**, región `South America (São Paulo)`).
+2. En el menú lateral: **SQL Editor → New query**, pega el contenido completo de
+   [`supabase/schema.sql`](supabase/schema.sql) y pulsa **Run**. Esto crea la tabla
+   `registros` con la restricción de un voto por correo.
+3. Ve a **Project Settings → API** y copia dos valores:
+   - **Project URL** (algo como `https://xxxx.supabase.co`)
+   - **service_role key** (en "Project API keys" — es secreta, no la compartas ni la
+     pongas en el código)
 
-### 2. Configurar el sitio
+### 2. Publicar en Vercel (~5 min)
 
-Abre `js/main.js` y edita el bloque `CONFIG` al inicio del archivo:
+1. Entra a [vercel.com](https://vercel.com), **Add New → Project** e importa este
+   repositorio de GitHub. No hace falta configurar build (es un sitio estático;
+   Vercel detecta la carpeta `api/` automáticamente).
+2. Antes de desplegar, en **Environment Variables** agrega:
 
-```js
-const CONFIG = {
-  SHEETS_URL: "https://script.google.com/macros/s/XXXX/exec", // la URL del paso 1
-  MATCH_DATE: "2026-06-25T18:00:00-05:00", // fecha y hora real del partido (hora Ecuador)
-};
-```
+   | Nombre | Valor |
+   |---|---|
+   | `SUPABASE_URL` | la Project URL del paso 1 |
+   | `SUPABASE_SERVICE_ROLE_KEY` | la service_role key del paso 1 |
 
-> ⚠️ **MATCH_DATE**: ajusta la fecha y hora reales del partido. La cuenta regresiva y el
-> cierre automático de la votación dependen de este valor. Actualiza también la variable
-> `MATCH_DATE` al inicio de `Code.gs` para que el servidor rechace votos tardíos.
+3. Pulsa **Deploy**. En un minuto el sitio queda en línea en `https://<proyecto>.vercel.app`.
+4. *(Opcional, recomendado)* En **Settings → Domains** conecta el dominio corporativo,
+   por ejemplo `sorteo.iasa.com.ec`. Vercel emite el certificado SSL automáticamente.
 
-### 3. Publicar
+### 3. Fecha del partido ⚠️
 
-Es un sitio 100 % estático: funciona en cualquier hosting.
+La fecha está como marcador en **dos lugares** y debe actualizarse con la fecha y hora
+oficiales del partido (de ella dependen la cuenta regresiva y el cierre automático de
+la votación):
 
-- **GitHub Pages**: Settings → Pages → desplegar desde la rama principal.
-- **Netlify / Vercel**: arrastra la carpeta del proyecto o conecta el repositorio.
+- `js/main.js` → `CONFIG.MATCH_DATE` (controla la cuenta regresiva en pantalla)
+- `api/votar.js` → `DEFAULT_MATCH_DATE` (rechaza votos tardíos en el servidor; también
+  puede fijarse con la variable de entorno `MATCH_DATE` en Vercel, sin tocar código)
+
+Formato: `2026-06-25T18:00:00-05:00` (hora de Ecuador).
 
 ## Después del partido: sortear el ganador
 
-En el editor de Apps Script, abre la función `sortearGanador`, cambia la variable
-`EQUIPO_GANADOR` por `"Ecuador"` o `"Alemania"` según el resultado oficial, y ejecútala.
-El ganador (elegido al azar entre los acertantes) aparecerá en una hoja nueva llamada
-**"Ganador"**, junto con el total de acertantes.
+En Supabase, abre **SQL Editor** y ejecuta (cambiando `'Ecuador'` por el equipo que
+haya ganado oficialmente):
+
+```sql
+-- Cuántos acertaron
+select count(*) from registros where voto = 'Ecuador';
+
+-- Elegir UN ganador al azar entre los acertantes
+select nombre, apellido, correo
+from registros
+where voto = 'Ecuador'
+order by random()
+limit 1;
+```
+
+Para entregar la base completa a marketing: **Table Editor → registros → Export → CSV**
+(se abre directo en Excel).
+
+## Probar en local (opcional)
+
+Con [la CLI de Vercel](https://vercel.com/docs/cli) instalada (`npm i -g vercel`):
+
+```bash
+vercel env pull   # descarga las variables de entorno del proyecto
+vercel dev        # sirve el sitio + la API en http://localhost:3000
+```
+
+> Abrir `index.html` directamente como archivo muestra el diseño, pero el envío del
+> formulario necesita la API, así que para probar el flujo completo usa `vercel dev`
+> o el sitio ya desplegado.
 
 ## Características
 
 - ✅ Diseño profesional responsive (móvil, tablet y escritorio) con la identidad de IASA.
-- ✅ Cuenta regresiva con cierre automático de la votación al inicio del partido.
+- ✅ Cuenta regresiva con cierre automático de la votación al inicio del partido
+  (verificado también en el servidor).
 - ✅ Validación de datos en el navegador **y** en el servidor.
-- ✅ Un solo voto por correo electrónico (verificado en el servidor) y bloqueo de re-voto
-  en el mismo navegador.
+- ✅ Un solo voto por correo, garantizado por la base de datos (`UNIQUE`), y bloqueo de
+  re-voto en el mismo navegador.
+- ✅ Credenciales solo en variables de entorno del servidor; la tabla tiene RLS activado,
+  de modo que es inaccesible desde el navegador.
 - ✅ Bases del sorteo incluidas (modal), con casilla de aceptación obligatoria.
-- ✅ Función de sorteo aleatorio entre los acertantes, lista para ejecutar.
-- ✅ Sin dependencias ni frameworks: HTML, CSS y JavaScript puros.
+- ✅ Consulta lista para sortear al ganador al azar entre los acertantes.
+- ✅ Sin frameworks ni dependencias: HTML, CSS y JavaScript puros.

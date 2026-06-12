@@ -3,13 +3,15 @@
    ========================================================================== */
 
 /* ------------------------- CONFIGURACIÓN -------------------------
-   1. SHEETS_URL: pega aquí la URL de tu implementación de Google
-      Apps Script (ver README.md, sección "Conectar Google Sheets").
+   1. API_URL: endpoint que guarda los votos. En Vercel es la función
+      serverless api/votar.js, servida en /api/votar (no cambiar salvo
+      que se aloje en otro dominio).
    2. MATCH_DATE: fecha y hora de inicio del partido (hora de Ecuador,
       UTC-5). La votación se cierra automáticamente en ese momento.
+      Debe coincidir con DEFAULT_MATCH_DATE en api/votar.js.
 ------------------------------------------------------------------- */
 const CONFIG = {
-  SHEETS_URL: "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT",
+  API_URL: "/api/votar",
   MATCH_DATE: "2026-06-25T18:00:00-05:00",
 };
 
@@ -174,21 +176,12 @@ form.addEventListener("submit", async (event) => {
   const data = validate();
   if (!data) return;
 
-  if (CONFIG.SHEETS_URL.startsWith("PEGA_AQUI")) {
-    setStatus(
-      "El sitio aún no está conectado a la base de datos. Configura SHEETS_URL en js/main.js (ver README).",
-      "error"
-    );
-    return;
-  }
-
   setLoading(true);
 
   try {
-    // Content-Type text/plain evita el preflight CORS que Apps Script no soporta.
-    const res = await fetch(CONFIG.SHEETS_URL, {
+    const res = await fetch(CONFIG.API_URL, {
       method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
