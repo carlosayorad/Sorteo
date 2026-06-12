@@ -397,73 +397,30 @@ body {
 
 .form-intro strong { color: var(--yellow); }
 
-/* Selector compacto de equipo dentro del popup */
-.mini-picker {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.7rem;
-  border: none;
-}
-
-.mini-picker legend {
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--gray-300);
-  margin-bottom: 0.5rem;
-}
-
-.mini-option {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  padding: 0.65rem 0.6rem;
+/* Pronóstico elegido (solo lectura) dentro del popup */
+.pick-display {
+  display: block;
   background: var(--black);
-  border: 2px solid var(--gray-700);
+  border: 1.5px dashed var(--gray-700);
   border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--gray-300);
+  text-align: center;
+}
+
+.pick-display.has-team {
+  border-style: solid;
+  border-color: var(--yellow);
+  color: var(--white);
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
 }
 
-.mini-option:hover { border-color: var(--gray-500); }
-
-.mini-option input { position: absolute; opacity: 0; pointer-events: none; }
-
-.mini-option:has(input:checked),
-.mini-option.selected {
-  border-color: var(--yellow);
-  box-shadow: 0 0 0 2px rgba(255, 205, 17, 0.25);
-}
-
-.mini-option:focus-within { outline: 2px solid var(--yellow); outline-offset: 2px; }
-
-.mini-flag {
-  display: flex;
-  flex-direction: column;
-  width: 30px;
-  height: 20px;
-  border-radius: 3px;
-  overflow: hidden;
-  outline: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.mini-flag i { display: block; width: 100%; }
-
-.flag-ecu i:nth-child(1) { background: #ffdd00; flex: 2; }
-.flag-ecu i:nth-child(2) { background: #034ea2; flex: 1; }
-.flag-ecu i:nth-child(3) { background: #ed1c24; flex: 1; }
-
-.flag-ger i { flex: 1; }
-.flag-ger i:nth-child(1) { background: #000000; }
-.flag-ger i:nth-child(2) { background: #dd0000; }
-.flag-ger i:nth-child(3) { background: #ffce00; }
+.pick-display.has-team strong { color: var(--yellow); }
 
 /* Campos */
 .form-field { margin-top: 1rem; text-align: left; }
@@ -569,6 +526,26 @@ body {
 
 .success-note { margin-top: 0.9rem; color: var(--yellow) !important; font-weight: 600; }
 
+/* Pantalla: sorteo no disponible */
+.reject-panel { text-align: center; }
+
+.reject-icon {
+  width: 68px;
+  height: 68px;
+  margin: 0.4rem auto 1.1rem;
+  border-radius: 50%;
+  background: rgba(214, 69, 65, 0.18);
+  border: 2px solid var(--red);
+  color: var(--red);
+  font-size: 2rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reject-panel p { color: var(--gray-300); }
+
 /* Bases (modal claro) */
 .terms-list { padding-left: 1.2rem; }
 .terms-list li { margin-bottom: 0.8rem; font-size: 0.93rem; color: #3d3d3d; }
@@ -583,7 +560,6 @@ body {
   .count-box { min-width: 56px; }
   .count-box span { font-size: 1.4rem; }
   .modal-panel { padding: 1.8rem 1.3rem; }
-  .mini-picker { grid-template-columns: 1fr; }
 }
 
 @media (max-height: 700px) {

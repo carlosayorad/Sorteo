@@ -25,7 +25,10 @@ const STORAGE_KEY = "iasa_sorteo_mundial_2026";
 /* ========================= Estado ========================= */
 const matchDate = new Date(CONFIG.MATCH_DATE);
 let votingClosed = false;
-let selectedTeam = null;
+let selectedTeam = null; // escudo elegido
+let pendingData = null;  // datos enviados en el popup antes de elegir escudo
+let registered = false;  // registro completado con éxito
+let rejected = false;    // cerró el popup sin completar sus datos
 
 const previous = (() => {
   try {
@@ -65,8 +68,20 @@ setInterval(updateCountdown, 1000);
 /* ========================= Selección de equipo ========================= */
 const crestCards = $$(".crest-card");
 const pickHint = $("#pick-hint");
+const pickDisplay = $("#pick-display");
 
-function selectTeam(team, { openForm = false } = {}) {
+function updatePickDisplay() {
+  if (selectedTeam) {
+    pickDisplay.classList.add("has-team");
+    pickDisplay.innerHTML = `Mi pronóstico: <strong>${selectedTeam}</strong>`;
+  } else {
+    pickDisplay.classList.remove("has-team");
+    pickDisplay.textContent =
+      "Aún no eliges equipo: después de enviar tus datos, toca el escudo de tu pronóstico.";
+  }
+}
+
+function selectTeam(team) {
   selectedTeam = team;
 
   crestCards.forEach((card) => {
@@ -76,62 +91,33 @@ function selectTeam(team, { openForm = false } = {}) {
     card.setAttribute("aria-checked", String(isThis));
   });
 
-  // Sincroniza el selector compacto del popup
-  const radio = document.querySelector(`.mini-option input[value="${team}"]`);
-  if (radio) radio.checked = true;
-  syncMiniPicker();
-  hideError("voto");
-
   pickHint.textContent = `¡Elegiste ${team}!`;
-
-  if (openForm) openFormModal();
+  updatePickDisplay();
 }
 
 crestCards.forEach((card) => {
   card.addEventListener("click", () => {
-    if (alreadyVoted || votingClosed) return;
-    // Tras el popup inicial, tocar un escudo reabre el registro
-    selectTeam(card.dataset.team, { openForm: popupShown });
+    if (alreadyVoted || votingClosed || registered || rejected) return;
+    selectTeam(card.dataset.team);
+
+    // Si ya dejó sus datos en el popup, el toque al escudo completa el registro
+    if (pendingData) {
+      openFormModal();
+      submitRegistration({ ...pendingData, voto: selectedTeam });
+    }
   });
 });
-
-// Radios del popup → reflejan la selección en los escudos
-$$(".mini-option input").forEach((input) => {
-  input.addEventListener("change", () => {
-    selectedTeam = input.value;
-    crestCards.forEach((card) => {
-      const isThis = card.dataset.team === input.value;
-      card.classList.toggle("selected", isThis);
-      card.classList.toggle("dimmed", !isThis);
-      card.setAttribute("aria-checked", String(isThis));
-    });
-    pickHint.textContent = `¡Elegiste ${input.value}!`;
-    syncMiniPicker();
-    hideError("voto");
-  });
-});
-
-// Respaldo de la clase .selected para navegadores sin soporte de :has()
-function syncMiniPicker() {
-  $$(".mini-option").forEach((opt) => {
-    opt.classList.toggle("selected", opt.querySelector("input").checked);
-  });
-}
 
 /* ========================= Popup de registro ========================= */
 const formModal = $("#form-modal");
-let popupShown = false;
 
 function openFormModal() {
-  if (votingClosed) return;
-  popupShown = true;
+  if (votingClosed || rejected) return;
+  updatePickDisplay();
   formModal.hidden = false;
   document.body.style.overflow = "hidden";
-  // Si ya eligió equipo, ir directo al nombre; si no, que elija en el popup
-  const focusTarget = selectedTeam
-    ? $("#nombre")
-    : document.querySelector('.mini-option input[value="Ecuador"]');
-  if (focusTarget) focusTarget.focus({ preventScroll: true });
+  const nombre = $("#nombre");
+  if (!registered && nombre && !nombre.disabled) nombre.focus({ preventScroll: true });
 }
 
 function closeFormModal() {
@@ -139,19 +125,34 @@ function closeFormModal() {
   document.body.style.overflow = "";
 }
 
+/* Cerrar el popup sin haber completado los datos = fuera del sorteo */
+function rejectVisitor() {
+  rejected = true;
+  closeFormModal();
+  crestCards.forEach((card) => (card.disabled = true));
+  pickHint.textContent = "";
+  $("#reject-overlay").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
 $$("[data-close-form]").forEach((el) => {
   el.addEventListener("click", () => {
-    closeFormModal();
-    if (!alreadyVoted && !votingClosed && !$("#vote-form").hidden) {
-      pickHint.textContent = selectedTeam
-        ? `¡Elegiste ${selectedTeam}! Toca un escudo para completar tu registro.`
-        : "Toca el escudo de tu equipo para registrarte.";
+    if (registered || pendingData) {
+      // Sus datos ya están completos: puede cerrar sin penalización
+      closeFormModal();
+      if (!registered && pendingData) {
+        pickHint.textContent =
+          "¡Último paso! Toca el escudo de tu pronóstico para completar tu registro.";
+      }
+    } else {
+      rejectVisitor();
     }
   });
 });
 
 /* ========================= Estados iniciales ========================= */
 if (alreadyVoted) {
+  registered = true;
   selectTeam(previous.voto);
   crestCards.forEach((card) => (card.disabled = true));
   pickHint.textContent = `Ya registraste tu pronóstico por ${previous.voto}. ¡Mucha suerte en el sorteo! 🍀`;
@@ -191,19 +192,17 @@ $("#acepta").addEventListener("change", () => hideError("acepta"));
 
 function validate() {
   let ok = true;
-  const voto = form.querySelector('input[name="voto"]:checked');
   const nombre = $("#nombre").value.trim();
   const apellido = $("#apellido").value.trim();
   const correo = $("#correo").value.trim();
   const acepta = $("#acepta").checked;
 
-  if (!voto) { showError("voto"); ok = false; }
   if (nombre.length < 2) { showError("nombre"); ok = false; }
   if (apellido.length < 2) { showError("apellido"); ok = false; }
   if (!EMAIL_RE.test(correo)) { showError("correo"); ok = false; }
   if (!acepta) { showError("acepta"); ok = false; }
 
-  return ok ? { voto: voto.value, nombre, apellido, correo } : null;
+  return ok ? { nombre, apellido, correo } : null;
 }
 
 /* ========================= Estado del formulario ========================= */
@@ -226,6 +225,8 @@ function setStatus(message, type) {
 }
 
 function showSuccess(team) {
+  registered = true;
+  pendingData = null;
   form.hidden = true;
   $("#success-msg").innerHTML =
     `Tu voto por <strong>${team}</strong> quedó registrado. Si ${team} gana el partido, ` +
@@ -236,18 +237,8 @@ function showSuccess(team) {
 }
 
 /* ========================= Envío ========================= */
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function submitRegistration(data) {
   setStatus("");
-
-  if (votingClosed) {
-    setStatus("La votación ya cerró: el partido está por comenzar.", "info");
-    return;
-  }
-
-  const data = validate();
-  if (!data) return;
-
   setLoading(true);
 
   try {
@@ -277,6 +268,29 @@ form.addEventListener("submit", async (event) => {
   } finally {
     setLoading(false);
   }
+}
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  setStatus("");
+
+  if (votingClosed) {
+    setStatus("La votación ya cerró: el partido está por comenzar.", "info");
+    return;
+  }
+
+  const data = validate();
+  if (!data) return;
+
+  if (selectedTeam) {
+    submitRegistration({ ...data, voto: selectedTeam });
+  } else {
+    // Datos completos pero sin escudo elegido: cerrar y pedir que lo toque
+    pendingData = data;
+    closeFormModal();
+    pickHint.textContent =
+      "¡Último paso! Toca el escudo de tu pronóstico para completar tu registro.";
+  }
 });
 
 /* ========================= Modal de bases ========================= */
@@ -304,6 +318,15 @@ document.addEventListener("keydown", (event) => {
     termsModal.hidden = true;
     document.body.style.overflow = formModal.hidden ? "" : "hidden";
   } else if (!formModal.hidden) {
-    closeFormModal();
+    // Escape también cuenta como cerrar el popup
+    if (registered || pendingData) {
+      closeFormModal();
+      if (!registered && pendingData) {
+        pickHint.textContent =
+          "¡Último paso! Toca el escudo de tu pronóstico para completar tu registro.";
+      }
+    } else {
+      rejectVisitor();
+    }
   }
 });

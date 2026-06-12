@@ -130,20 +130,7 @@
           por favor rellena los siguientes datos:
         </p>
 
-        <fieldset class="mini-picker">
-          <legend>Mi pronóstico</legend>
-          <label class="mini-option" data-team="Ecuador">
-            <input type="radio" name="voto" value="Ecuador" required />
-            <span class="mini-flag flag-ecu" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span>Ecuador</span>
-          </label>
-          <label class="mini-option" data-team="Alemania">
-            <input type="radio" name="voto" value="Alemania" required />
-            <span class="mini-flag flag-ger" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span>Alemania</span>
-          </label>
-        </fieldset>
-        <p class="field-error" id="error-voto" hidden>Selecciona el equipo que crees que ganará.</p>
+        <p class="pick-display" id="pick-display"></p>
 
         <div class="form-field">
           <label for="nombre">Nombre</label>
@@ -181,6 +168,16 @@
         <p id="success-msg"></p>
         <p class="success-note">El ganador será contactado al correo registrado. ¡Mucha suerte! 🍀</p>
       </div>
+    </div>
+  </div>
+
+  <!-- ============ PANTALLA: SORTEO NO DISPONIBLE ============ -->
+  <div class="modal" id="reject-overlay" role="alertdialog" aria-modal="true" aria-labelledby="reject-title" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel modal-dark reject-panel">
+      <div class="reject-icon" aria-hidden="true">✕</div>
+      <h2 id="reject-title">Lo sentimos</h2>
+      <p>Este sorteo no está disponible para ti.</p>
     </div>
   </div>
 
