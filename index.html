@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pronostica y Gana | IASA · Mundial 2026</title>
+  <meta name="description" content="Vota por el ganador del Ecuador vs. Alemania del Mundial 2026 y participa en el sorteo de una Smart TV. Una iniciativa de IASA." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23FFCD11'/><text x='50' y='68' font-size='52' font-weight='900' font-family='Arial' text-anchor='middle' fill='%23111'>IA</text></svg>" />
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#inicio" aria-label="IASA - Inicio">
+        <span class="brand-mark">IASA</span>
+        <span class="brand-tag">Construyendo el futuro del Ecuador</span>
+      </a>
+      <nav class="site-nav">
+        <a href="#como-participar">Cómo participar</a>
+        <a href="#premio">El premio</a>
+        <a href="#bases" data-open-terms>Bases del sorteo</a>
+        <a href="#votar" class="nav-cta">Vota ahora</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="inicio">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <p class="hero-kicker">IASA presenta · Mundial 2026</p>
+        <h1 class="hero-title">
+          Pronostica el partido.<br />
+          <span class="accent">Gana una Smart&nbsp;TV.</span>
+        </h1>
+        <p class="hero-sub">
+          Vota por el equipo que crees que ganará el <strong>Ecuador&nbsp;vs.&nbsp;Alemania</strong>.
+          Si aciertas, participas automáticamente en el sorteo de una
+          <strong>Smart&nbsp;TV&nbsp;55&Prime;&nbsp;4K</strong>.
+        </p>
+
+        <!-- Tarjeta del partido -->
+        <div class="match-card" role="group" aria-label="Partido Ecuador contra Alemania">
+          <div class="match-team">
+            <span class="flag flag-ecu" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="match-team-name">Ecuador</span>
+          </div>
+          <div class="match-vs">
+            <span class="vs-label">VS</span>
+            <span class="match-date" id="match-date-label">Mundial 2026</span>
+          </div>
+          <div class="match-team">
+            <span class="flag flag-ger" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="match-team-name">Alemania</span>
+          </div>
+        </div>
+
+        <!-- Cuenta regresiva -->
+        <div class="countdown" id="countdown" aria-live="polite">
+          <p class="countdown-title">La votación cierra en</p>
+          <div class="countdown-grid">
+            <div class="count-box"><span id="cd-days">--</span><small>Días</small></div>
+            <div class="count-box"><span id="cd-hours">--</span><small>Horas</small></div>
+            <div class="count-box"><span id="cd-mins">--</span><small>Min</small></div>
+            <div class="count-box"><span id="cd-secs">--</span><small>Seg</small></div>
+          </div>
+        </div>
+
+        <a href="#votar" class="btn btn-primary btn-lg">Quiero participar</a>
+      </div>
+    </section>
+
+    <!-- ============ CÓMO PARTICIPAR ============ -->
+    <section class="steps" id="como-participar">
+      <div class="container">
+        <h2 class="section-title">¿Cómo <span class="accent">participar</span>?</h2>
+        <p class="section-sub">Tres pasos simples y estás dentro del sorteo.</p>
+        <div class="steps-grid">
+          <article class="step-card">
+            <span class="step-num">1</span>
+            <h3>Elige tu equipo</h3>
+            <p>Vota por <strong>Ecuador</strong> o <strong>Alemania</strong>: el equipo que crees que ganará el partido.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-num">2</span>
+            <h3>Regístrate</h3>
+            <p>Completa tus datos: nombre, apellido y correo electrónico. Solo te tomará un minuto.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-num">3</span>
+            <h3>Acierta y gana</h3>
+            <p>Si tu equipo gana el partido, entras directo al sorteo de la <strong>Smart TV 55&Prime; 4K</strong>.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VOTACIÓN ============ -->
+    <section class="vote" id="votar">
+      <div class="container vote-inner">
+        <h2 class="section-title">¿Quién gana el <span class="accent">Ecuador vs. Alemania</span>?</h2>
+        <p class="section-sub">Selecciona tu pronóstico y completa el registro.</p>
+
+        <form id="vote-form" novalidate>
+          <!-- Selección de equipo -->
+          <div class="team-picker" role="radiogroup" aria-label="Elige el equipo ganador">
+            <label class="team-option" data-team="Ecuador">
+              <input type="radio" name="voto" value="Ecuador" required />
+              <span class="flag flag-ecu flag-lg" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="team-option-name">Ecuador</span>
+              <span class="team-option-check" aria-hidden="true">✓ Mi pronóstico</span>
+            </label>
+            <span class="team-picker-vs" aria-hidden="true">VS</span>
+            <label class="team-option" data-team="Alemania">
+              <input type="radio" name="voto" value="Alemania" required />
+              <span class="flag flag-ger flag-lg" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="team-option-name">Alemania</span>
+              <span class="team-option-check" aria-hidden="true">✓ Mi pronóstico</span>
+            </label>
+          </div>
+          <p class="field-error" id="error-voto" hidden>Selecciona el equipo que crees que ganará.</p>
+
+          <!-- Datos personales -->
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="nombre">Nombre</label>
+              <input type="text" id="nombre" name="nombre" autocomplete="given-name" placeholder="Ej. María" maxlength="60" required />
+              <p class="field-error" id="error-nombre" hidden>Ingresa tu nombre.</p>
+            </div>
+            <div class="form-field">
+              <label for="apellido">Apellido</label>
+              <input type="text" id="apellido" name="apellido" autocomplete="family-name" placeholder="Ej. Andrade" maxlength="60" required />
+              <p class="field-error" id="error-apellido" hidden>Ingresa tu apellido.</p>
+            </div>
+            <div class="form-field form-field-full">
+              <label for="correo">Correo electrónico</label>
+              <input type="email" id="correo" name="correo" autocomplete="email" placeholder="Ej. maria@correo.com" maxlength="120" required />
+              <p class="field-error" id="error-correo" hidden>Ingresa un correo electrónico válido.</p>
+            </div>
+          </div>
+
+          <label class="terms-check">
+            <input type="checkbox" id="acepta" required />
+            <span>He leído y acepto las <a href="#bases" data-open-terms>bases del sorteo</a> y autorizo a IASA el uso de mis datos para este sorteo.</span>
+          </label>
+          <p class="field-error" id="error-acepta" hidden>Debes aceptar las bases del sorteo para participar.</p>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit-btn">
+            <span class="btn-label">Enviar mi pronóstico</span>
+            <span class="btn-spinner" hidden aria-hidden="true"></span>
+          </button>
+          <p class="form-status" id="form-status" role="alert" hidden></p>
+        </form>
+
+        <!-- Pantalla de éxito -->
+        <div class="success-card" id="success-card" hidden>
+          <div class="success-icon" aria-hidden="true">✓</div>
+          <h3>¡Pronóstico registrado!</h3>
+          <p id="success-msg">
+            Gracias por participar. Si tu equipo gana el partido,
+            entrarás automáticamente en el sorteo de la Smart&nbsp;TV&nbsp;55&Prime;&nbsp;4K.
+          </p>
+          <p class="success-note">El ganador será contactado al correo registrado. ¡Mucha suerte! 🍀</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PREMIO ============ -->
+    <section class="prize" id="premio">
+      <div class="container prize-inner">
+        <div class="prize-copy">
+          <h2 class="section-title">El <span class="accent">premio</span></h2>
+          <h3 class="prize-name">Smart TV 55&Prime; 4K UHD</h3>
+          <ul class="prize-list">
+            <li>Pantalla 4K Ultra HD de 55 pulgadas</li>
+            <li>Sistema Smart con tus apps de streaming favoritas</li>
+            <li>Lista para vivir cada partido del Mundial 2026</li>
+          </ul>
+          <p class="prize-foot">Un solo ganador será sorteado entre quienes acierten el resultado del partido.</p>
+        </div>
+        <div class="prize-visual" aria-hidden="true">
+          <div class="tv">
+            <div class="tv-screen">
+              <span class="tv-screen-text">ECU&nbsp;·&nbsp;GER<br /><em>Mundial 2026</em></span>
+            </div>
+            <div class="tv-stand"></div>
+            <div class="tv-base"></div>
+          </div>
+          <span class="prize-badge">55&Prime; 4K</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">IASA</span>
+        <p>Maquinaria y soluciones que construyen el futuro del Ecuador.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#como-participar">Cómo participar</a>
+        <a href="#premio">El premio</a>
+        <a href="#bases" data-open-terms>Bases del sorteo</a>
+      </div>
+      <p class="footer-legal">
+        © 2026 IASA. Todos los derechos reservados. Promoción válida en Ecuador.
+        Sorteo sujeto a las bases y condiciones publicadas en este sitio.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ============ MODAL: BASES DEL SORTEO ============ -->
+  <div class="modal" id="terms-modal" role="dialog" aria-modal="true" aria-labelledby="terms-title" hidden>
+    <div class="modal-backdrop" data-close-terms></div>
+    <div class="modal-panel">
+      <button class="modal-close" data-close-terms aria-label="Cerrar">×</button>
+      <h2 id="terms-title">Bases del sorteo</h2>
+      <ol class="terms-list">
+        <li><strong>Organizador:</strong> el sorteo es organizado por IASA y es válido únicamente dentro del territorio ecuatoriano.</li>
+        <li><strong>Vigencia:</strong> se podrá votar desde la publicación de esta página hasta el inicio del partido Ecuador vs. Alemania del Mundial 2026. Los votos posteriores no serán válidos.</li>
+        <li><strong>Participación:</strong> para participar se debe registrar nombre, apellido, correo electrónico y el pronóstico del equipo ganador. Se permite <strong>una sola participación por persona</strong> (correo electrónico único).</li>
+        <li><strong>Selección de ganadores:</strong> solo participan en el sorteo quienes hayan votado por el equipo que resulte ganador del partido en tiempo reglamentario o según el resultado oficial del encuentro. Entre los acertantes se sorteará <strong>una (1) Smart TV 55&Prime; 4K</strong>.</li>
+        <li><strong>Anuncio y entrega:</strong> el ganador será contactado al correo electrónico registrado dentro de los días posteriores al partido. Si no responde en el plazo indicado en el contacto, se podrá seleccionar un nuevo ganador.</li>
+        <li><strong>Datos personales:</strong> los datos recolectados serán utilizados por IASA exclusivamente para la gestión de este sorteo y comunicaciones relacionadas, conforme a la Ley Orgánica de Protección de Datos Personales del Ecuador.</li>
+        <li><strong>Restricciones:</strong> no podrán participar empleados de IASA directamente vinculados a la organización del sorteo. El premio no es canjeable por dinero en efectivo.</li>
+        <li><strong>Aceptación:</strong> la participación en el sorteo implica la aceptación total de estas bases.</li>
+      </ol>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
