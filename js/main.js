@@ -9,12 +9,12 @@
       UTC-5). La votación se cierra automáticamente en ese momento.
       Debe coincidir con DEFAULT_MATCH_DATE en api/votar.js.
    3. POPUP_DELAY_MS: tiempo tras entrar a la página para mostrar el
-      popup de registro (5 segundos).
+      popup de registro (3 segundos).
 ------------------------------------------------------------------- */
 const CONFIG = {
   API_URL: "/api/votar",
   MATCH_DATE: "2026-06-25T18:00:00-05:00",
-  POPUP_DELAY_MS: 5000,
+  POPUP_DELAY_MS: 3000,
 };
 
 const $ = (sel) => document.querySelector(sel);
