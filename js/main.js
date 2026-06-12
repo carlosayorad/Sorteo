@@ -3,18 +3,21 @@
    ========================================================================== */
 
 /* ------------------------- CONFIGURACIÓN -------------------------
-   1. API_URL: endpoint que guarda los votos. En Vercel es la función
-      serverless api/votar.js, servida en /api/votar.
+   1. SEND_CODE_URL / VERIFY_URL: endpoints de la API en Vercel.
    2. MATCH_DATE: fecha y hora de inicio del partido (hora de Ecuador,
       UTC-5). La votación se cierra automáticamente en ese momento.
-      Debe coincidir con DEFAULT_MATCH_DATE en api/votar.js.
+      Debe coincidir con DEFAULT_MATCH_DATE en api/_util.js.
    3. POPUP_DELAY_MS: tiempo tras entrar a la página para mostrar el
       popup de registro (2 segundos).
+   4. RESEND_COOLDOWN_S: segundos de espera para reenviar el código
+      (debe coincidir con RESEND_COOLDOWN_MS en api/enviar-codigo.js).
 ------------------------------------------------------------------- */
 const CONFIG = {
-  API_URL: "/api/votar",
+  SEND_CODE_URL: "/api/enviar-codigo",
+  VERIFY_URL: "/api/verificar-codigo",
   MATCH_DATE: "2026-06-25T18:00:00-05:00",
   POPUP_DELAY_MS: 2000,
+  RESEND_COOLDOWN_S: 60,
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -25,10 +28,11 @@ const STORAGE_KEY = "iasa_sorteo_mundial_2026";
 /* ========================= Estado ========================= */
 const matchDate = new Date(CONFIG.MATCH_DATE);
 let votingClosed = false;
-let selectedTeam = null; // escudo elegido
-let pendingData = null;  // datos enviados en el popup antes de elegir escudo
-let registered = false;  // registro completado con éxito
-let rejected = false;    // cerró el popup sin completar sus datos
+let selectedTeam = null;  // escudo elegido
+let pendingData = null;   // datos válidos a la espera de elegir escudo
+let sentData = null;      // datos con los que se envió el código
+let registered = false;   // registro completado con éxito
+let rejected = false;     // cerró el popup sin completar sus datos
 
 const previous = (() => {
   try {
@@ -100,24 +104,36 @@ crestCards.forEach((card) => {
     if (alreadyVoted || votingClosed || registered || rejected) return;
     selectTeam(card.dataset.team);
 
-    // Si ya dejó sus datos en el popup, el toque al escudo completa el registro
-    if (pendingData) {
+    if (sentData) {
+      // Ya hay un código en camino: volver al paso de verificación
       openFormModal();
-      submitRegistration({ ...pendingData, voto: selectedTeam });
+    } else if (pendingData) {
+      // Datos listos y ya eligió escudo: enviar el código
+      openFormModal();
+      sendCode({ ...pendingData, voto: selectedTeam });
     }
   });
 });
 
 /* ========================= Popup de registro ========================= */
 const formModal = $("#form-modal");
+const form = $("#vote-form");
+const codeForm = $("#code-form");
+
+function showStep(step) {
+  form.hidden = step !== "datos";
+  codeForm.hidden = step !== "codigo";
+  $("#success-card").hidden = step !== "exito";
+}
 
 function openFormModal() {
   if (votingClosed || rejected) return;
   updatePickDisplay();
   formModal.hidden = false;
   document.body.style.overflow = "hidden";
-  const nombre = $("#nombre");
-  if (!registered && nombre && !nombre.disabled) nombre.focus({ preventScroll: true });
+  if (registered) return;
+  const focusTarget = sentData ? $("#codigo") : $("#nombre");
+  if (focusTarget) focusTarget.focus({ preventScroll: true });
 }
 
 function closeFormModal() {
@@ -135,20 +151,24 @@ function rejectVisitor() {
   document.body.style.overflow = "hidden";
 }
 
-$$("[data-close-form]").forEach((el) => {
-  el.addEventListener("click", () => {
-    if (registered || pendingData) {
-      // Sus datos ya están completos: puede cerrar sin penalización
-      closeFormModal();
-      if (!registered && pendingData) {
-        pickHint.textContent =
-          "¡Último paso! Toca el escudo de tu pronóstico para completar tu registro.";
-      }
+/* Intento de cierre: solo se permite sin penalización si ya dejó sus datos */
+function attemptClose() {
+  if (registered || pendingData || sentData) {
+    closeFormModal();
+    if (registered) return;
+    if (sentData) {
+      pickHint.textContent =
+        "Te enviamos un código a tu correo. Toca tu escudo para terminar la verificación.";
     } else {
-      rejectVisitor();
+      pickHint.textContent =
+        "¡Último paso! Toca el escudo de tu pronóstico para completar tu registro.";
     }
-  });
-});
+  } else {
+    rejectVisitor();
+  }
+}
+
+$$("[data-close-form]").forEach((el) => el.addEventListener("click", attemptClose));
 
 /* ========================= Estados iniciales ========================= */
 if (alreadyVoted) {
@@ -165,10 +185,6 @@ if (alreadyVoted) {
 }
 
 /* ========================= Validación ========================= */
-const form = $("#vote-form");
-const submitBtn = $("#submit-btn");
-const statusEl = $("#form-status");
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 function showError(field) {
@@ -205,77 +221,102 @@ function validate() {
   return ok ? { nombre, apellido, correo } : null;
 }
 
-/* ========================= Estado del formulario ========================= */
-function setLoading(loading) {
-  submitBtn.disabled = loading;
-  submitBtn.querySelector(".btn-label").textContent = loading
-    ? "Enviando..."
-    : "Enviar y participar";
-  submitBtn.querySelector(".btn-spinner").hidden = !loading;
+/* ========================= Estado de los botones ========================= */
+function setLoading(btn, loading, idleLabel) {
+  btn.disabled = loading;
+  btn.querySelector(".btn-label").textContent = loading ? "Enviando..." : idleLabel;
+  btn.querySelector(".btn-spinner").hidden = !loading;
 }
 
-function setStatus(message, type) {
+function setStatus(el, message, type) {
   if (!message) {
-    statusEl.hidden = true;
+    el.hidden = true;
     return;
   }
-  statusEl.textContent = message;
-  statusEl.className = `form-status ${type}`;
-  statusEl.hidden = false;
+  el.textContent = message;
+  el.className = `form-status ${type}`;
+  el.hidden = false;
 }
+
+const formStatus = $("#form-status");
+const codeStatus = $("#code-status");
 
 function showSuccess(team) {
   registered = true;
   pendingData = null;
-  form.hidden = true;
+  sentData = null;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ voto: team }));
   $("#success-msg").innerHTML =
     `Tu voto por <strong>${team}</strong> quedó registrado. Si ${team} gana el partido, ` +
     `entrarás automáticamente en el sorteo de la Smart&nbsp;TV&nbsp;55&Prime;&nbsp;4K.`;
-  $("#success-card").hidden = false;
+  showStep("exito");
   pickHint.textContent = `Ya registraste tu pronóstico por ${team}. ¡Mucha suerte en el sorteo! 🍀`;
   crestCards.forEach((card) => (card.disabled = true));
 }
 
-/* ========================= Envío ========================= */
-async function submitRegistration(data) {
-  setStatus("");
-  setLoading(true);
+/* ========================= Paso 1: enviar código ========================= */
+const submitBtn = $("#submit-btn");
+
+async function sendCode(data, { viaResend = false } = {}) {
+  const btn = viaResend ? null : submitBtn;
+  const statusTarget = viaResend ? codeStatus : formStatus;
+  setStatus(statusTarget, "");
+  if (btn) setLoading(btn, true, "Enviar código a mi correo");
 
   try {
-    const res = await fetch(CONFIG.API_URL, {
+    const res = await fetch(CONFIG.SEND_CODE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
     const result = await res.json();
 
-    if (result.status === "ok") {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ voto: data.voto }));
-      showSuccess(data.voto);
+    if (result.status === "ok" || result.status === "wait") {
+      sentData = data;
+      pendingData = null;
+      $("#code-email").textContent = data.correo;
+      showStep("codigo");
+      $("#codigo").focus({ preventScroll: true });
+      startResendCooldown();
+      if (result.status === "wait") {
+        setStatus(
+          codeStatus,
+          "Ya te enviamos un código hace menos de un minuto. Revisa tu correo y tu carpeta de spam.",
+          "info"
+        );
+      } else if (viaResend) {
+        setStatus(codeStatus, "Te enviamos un código nuevo. Revisa tu correo.", "info");
+      }
     } else if (result.status === "duplicate") {
       setStatus(
+        statusTarget,
         "Este correo ya tiene un pronóstico registrado. Solo se permite una participación por persona.",
         "info"
       );
     } else if (result.status === "closed") {
-      setStatus("La votación ya cerró: el partido está por comenzar.", "info");
+      setStatus(statusTarget, "La votación ya cerró: el partido está por comenzar.", "info");
+    } else if (result.status === "mail_error") {
+      setStatus(
+        statusTarget,
+        "No pudimos enviar el código a ese correo. Verifica que esté bien escrito.",
+        "error"
+      );
     } else {
-      setStatus("No pudimos registrar tu voto. Inténtalo nuevamente en unos minutos.", "error");
+      setStatus(statusTarget, "No pudimos enviar el código. Inténtalo nuevamente en unos minutos.", "error");
     }
   } catch {
-    setStatus("Error de conexión. Revisa tu internet e inténtalo nuevamente.", "error");
+    setStatus(statusTarget, "Error de conexión. Revisa tu internet e inténtalo nuevamente.", "error");
   } finally {
-    setLoading(false);
+    if (btn) setLoading(btn, false, "Enviar código a mi correo");
   }
 }
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  setStatus("");
+  setStatus(formStatus, "");
 
   if (votingClosed) {
-    setStatus("La votación ya cerró: el partido está por comenzar.", "info");
+    setStatus(formStatus, "La votación ya cerró: el partido está por comenzar.", "info");
     return;
   }
 
@@ -283,13 +324,112 @@ form.addEventListener("submit", (event) => {
   if (!data) return;
 
   if (selectedTeam) {
-    submitRegistration({ ...data, voto: selectedTeam });
+    sendCode({ ...data, voto: selectedTeam });
   } else {
     // Datos completos pero sin escudo elegido: cerrar y pedir que lo toque
     pendingData = data;
     closeFormModal();
     pickHint.textContent =
       "¡Último paso! Toca el escudo de tu pronóstico para completar tu registro.";
+  }
+});
+
+/* ========================= Paso 2: verificar código ========================= */
+const verifyBtn = $("#verify-btn");
+const codigoInput = $("#codigo");
+const resendBtn = $("#resend-btn");
+let resendTimer = null;
+
+// Solo dígitos en el campo del código
+codigoInput.addEventListener("input", () => {
+  codigoInput.value = codigoInput.value.replace(/\D/g, "").slice(0, 6);
+  hideError("codigo");
+});
+
+function startResendCooldown() {
+  let remaining = CONFIG.RESEND_COOLDOWN_S;
+  resendBtn.disabled = true;
+  clearInterval(resendTimer);
+
+  const tick = () => {
+    if (remaining <= 0) {
+      clearInterval(resendTimer);
+      resendBtn.disabled = false;
+      resendBtn.textContent = "Reenviar código";
+      return;
+    }
+    resendBtn.textContent = `Reenviar código (${remaining--} s)`;
+  };
+
+  tick();
+  resendTimer = setInterval(tick, 1000);
+}
+
+resendBtn.addEventListener("click", () => {
+  if (sentData) sendCode(sentData, { viaResend: true });
+});
+
+$("#back-btn").addEventListener("click", () => {
+  // Volver al paso de datos (p. ej. para corregir el correo)
+  pendingData = null;
+  showStep("datos");
+  setStatus(codeStatus, "");
+  $("#correo").focus({ preventScroll: true });
+});
+
+codeForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  setStatus(codeStatus, "");
+
+  const codigo = codigoInput.value.trim();
+  if (!/^\d{6}$/.test(codigo)) {
+    showError("codigo");
+    return;
+  }
+
+  setLoading(verifyBtn, true, "Confirmar y participar");
+
+  try {
+    const res = await fetch(CONFIG.VERIFY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ correo: sentData.correo, codigo }),
+    });
+    const result = await res.json();
+
+    if (result.status === "ok") {
+      showSuccess(result.voto || sentData.voto);
+    } else if (result.status === "invalid_code") {
+      const extra =
+        typeof result.remaining === "number" && result.remaining <= 2
+          ? ` Te quedan ${result.remaining} intento${result.remaining === 1 ? "" : "s"}.`
+          : "";
+      setStatus(codeStatus, `Código incorrecto. Revisa tu correo e inténtalo de nuevo.${extra}`, "error");
+    } else if (result.status === "expired") {
+      setStatus(codeStatus, "El código expiró. Pulsa «Reenviar código» para recibir uno nuevo.", "info");
+      resendBtn.disabled = false;
+      resendBtn.textContent = "Reenviar código";
+    } else if (result.status === "too_many") {
+      setStatus(codeStatus, "Demasiados intentos. Pulsa «Reenviar código» para recibir uno nuevo.", "info");
+      resendBtn.disabled = false;
+      resendBtn.textContent = "Reenviar código";
+    } else if (result.status === "not_found") {
+      setStatus(codeStatus, "No encontramos tu verificación. Vuelve a enviar tus datos.", "error");
+    } else if (result.status === "duplicate") {
+      setStatus(
+        codeStatus,
+        "Este correo ya tiene un pronóstico registrado. Solo se permite una participación por persona.",
+        "info"
+      );
+    } else if (result.status === "closed") {
+      setStatus(codeStatus, "La votación ya cerró: el partido está por comenzar.", "info");
+    } else {
+      setStatus(codeStatus, "No pudimos verificar el código. Inténtalo nuevamente en unos minutos.", "error");
+    }
+  } catch {
+    setStatus(codeStatus, "Error de conexión. Revisa tu internet e inténtalo nuevamente.", "error");
+  } finally {
+    setLoading(verifyBtn, false, "Confirmar y participar");
   }
 });
 
@@ -318,15 +458,6 @@ document.addEventListener("keydown", (event) => {
     termsModal.hidden = true;
     document.body.style.overflow = formModal.hidden ? "" : "hidden";
   } else if (!formModal.hidden) {
-    // Escape también cuenta como cerrar el popup
-    if (registered || pendingData) {
-      closeFormModal();
-      if (!registered && pendingData) {
-        pickHint.textContent =
-          "¡Último paso! Toca el escudo de tu pronóstico para completar tu registro.";
-      }
-    } else {
-      rejectVisitor();
-    }
+    attemptClose();
   }
 });

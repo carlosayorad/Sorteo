@@ -160,10 +160,38 @@
         <p class="field-error" id="error-acepta" hidden>Debes aceptar las bases del sorteo para participar.</p>
 
         <button type="submit" class="btn btn-primary btn-block" id="submit-btn">
-          <span class="btn-label">Enviar y participar</span>
+          <span class="btn-label">Enviar código a mi correo</span>
           <span class="btn-spinner" hidden aria-hidden="true"></span>
         </button>
         <p class="form-status" id="form-status" role="alert" hidden></p>
+      </form>
+
+      <!-- Paso 2: verificación del código -->
+      <form id="code-form" novalidate hidden>
+        <h2>Revisa tu correo 📬</h2>
+        <p class="form-intro">
+          Te enviamos un código de 6 dígitos a <strong id="code-email"></strong>.
+          Escríbelo aquí para confirmar tu participación
+          <span class="code-note">(si no lo ves, revisa la carpeta de spam)</span>:
+        </p>
+
+        <div class="form-field">
+          <label for="codigo">Código de verificación</label>
+          <input type="text" id="codigo" name="codigo" class="code-input" inputmode="numeric"
+                 autocomplete="one-time-code" maxlength="6" placeholder="······" required />
+          <p class="field-error" id="error-codigo" hidden>Ingresa el código de 6 dígitos.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="verify-btn">
+          <span class="btn-label">Confirmar y participar</span>
+          <span class="btn-spinner" hidden aria-hidden="true"></span>
+        </button>
+        <p class="form-status" id="code-status" role="alert" hidden></p>
+
+        <div class="code-actions">
+          <button type="button" class="link-action" id="resend-btn">Reenviar código</button>
+          <button type="button" class="link-action" id="back-btn">Corregir mis datos</button>
+        </div>
       </form>
 
       <!-- Éxito (reemplaza al formulario dentro del popup) -->

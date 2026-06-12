@@ -518,6 +518,45 @@ body {
 .form-status.error { background: rgba(214, 69, 65, 0.16); color: #ff9b97; border: 1px solid rgba(214, 69, 65, 0.5); }
 .form-status.info { background: rgba(255, 205, 17, 0.12); color: var(--yellow); border: 1px solid rgba(255, 205, 17, 0.4); }
 
+/* Paso de verificación del código */
+.code-note { color: var(--gray-500); font-size: 0.85em; }
+
+.code-input {
+  text-align: center;
+  font-family: var(--font-display) !important;
+  font-size: 2rem !important;
+  font-weight: 800;
+  letter-spacing: 0.45em;
+  text-indent: 0.45em; /* compensa el letter-spacing para centrar */
+}
+
+.code-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.1rem;
+}
+
+.link-action {
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--yellow);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.link-action:hover { color: var(--yellow-dark); }
+
+.link-action[disabled] {
+  color: var(--gray-500);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
 /* Éxito */
 .success-card { text-align: center; padding: 1rem 0 0.4rem; }
 

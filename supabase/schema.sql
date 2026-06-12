@@ -17,3 +17,16 @@ alter table public.registros enable row level security;
 
 -- Índice para consultar resultados por equipo
 create index if not exists registros_voto_idx on public.registros (voto);
+
+-- Verificaciones pendientes: códigos enviados por correo que aún no se
+-- confirman. Una fila por correo; se elimina al completar el registro.
+create table if not exists public.verificaciones (
+  correo       text primary key,
+  codigo_hash  text not null,                  -- hash SHA-256 del código (nunca se guarda en claro)
+  datos        jsonb not null,                 -- nombre, apellido y voto pendientes
+  intentos     int not null default 0,         -- intentos fallidos de verificación
+  expira_en    timestamptz not null,
+  enviado_en   timestamptz not null default now()
+);
+
+alter table public.verificaciones enable row level security;
