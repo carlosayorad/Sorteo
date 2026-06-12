@@ -51,9 +51,22 @@ body {
   padding: 1.1rem clamp(1rem, 4vw, 2.4rem);
 }
 
-.brand { text-decoration: none; }
+.brand {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
 
-/* Logotipo IASA: itálica pesada en blanco (sustituible por la imagen oficial) */
+/* Imágenes de marca: ajusta aquí la altura con la que se muestran */
+.brand-logo { height: 36px; width: auto; display: block; }
+.brand-slogan { height: 20px; width: auto; display: block; }
+
+/* Respaldo en texto: solo se muestra si assets/logo.png no existe */
+.brand-mark { display: none; }
+.brand.no-img .brand-mark { display: inline; }
+
+/* Logotipo IASA en texto: itálica pesada en blanco */
 .brand-mark {
   font-family: var(--font-body);
   font-style: italic;
@@ -553,6 +566,8 @@ body {
 /* ============ Responsive ============ */
 @media (max-width: 560px) {
   .brand-mark { font-size: 1.7rem; }
+  .brand-logo { height: 30px; }
+  .brand-slogan { display: none; }
   .arena { padding-top: 0.4rem; }
   .subtitle { font-size: 0.95rem; margin-bottom: 1.6rem; }
   .crests { gap: 0.6rem; }

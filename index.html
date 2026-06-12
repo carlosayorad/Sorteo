@@ -18,8 +18,13 @@
     <!-- ============ HEADER ============ -->
     <header class="site-header">
       <a class="brand" href="#" aria-label="IASA">
-        <!-- Logotipo IASA (reemplazable por assets/logo.png cuando esté disponible) -->
-        <span class="brand-mark">IASA</span>
+        <!-- Sube assets/logo.png y assets/eslogan.png para reemplazar el texto.
+             El tamaño en pantalla se controla en css/styles.css (.brand-logo / .brand-slogan). -->
+        <img src="assets/logo.png" alt="IASA" class="brand-logo"
+             onerror="this.closest('.brand').classList.add('no-img'); this.remove()" />
+        <img src="assets/eslogan.png" alt="" class="brand-slogan"
+             onerror="this.remove()" />
+        <span class="brand-mark" aria-hidden="true">IASA</span>
       </a>
       <button class="link-bases" data-open-terms type="button">Bases del sorteo</button>
     </header>
