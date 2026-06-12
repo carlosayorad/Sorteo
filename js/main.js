@@ -160,7 +160,7 @@ if (alreadyVoted) {
   crestCards.forEach((card) => (card.disabled = true));
   pickHint.textContent = "La votación ha cerrado.";
 } else {
-  // Popup de registro a los 5 segundos de entrar a la página
+  // Popup de registro a los 3 segundos de entrar a la página
   setTimeout(openFormModal, CONFIG.POPUP_DELAY_MS);
 }
 
